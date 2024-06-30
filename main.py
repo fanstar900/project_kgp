@@ -16,12 +16,12 @@ def clear_last_line():
 public_key, private_key= rsa.newkeys(1024)
 public_key_parter = None
 
-choice = input('''What you want to connect to 
+choice = int(input('''What you want to connect to 
     press 1. Host
     press 2. Client
-''')
+'''))
 
-if choice =='1':
+if choice == 1:
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creates a node for communication
     server.bind( (socket.gethostbyname(socket.gethostname()) , 8080) )
     server.listen(1) # argument 1 restricts no. of connections
@@ -30,7 +30,7 @@ if choice =='1':
     public_key_partner = rsa.PublicKey.load_pkcs1(client.recv(1024)) #receives the public key of the client
     
 
-elif choice=='2':
+elif choice == 2:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect (( socket.gethostbyname(socket.gethostname()), 8080))
     public_key_partner = rsa.PublicKey.load_pkcs1(client.recv(1024))  #receives the public key of the host
@@ -51,7 +51,11 @@ def sending_messages (client) :
 
 def receiving_messages (client):
     while True:
-        print("Partner: "+ rsa.decrypt(client.recv(1024), private_key).decode())  #receives,decrypts using private key and decodes the message
+        if choice==1: 
+            partner = 'CLIENT: '
+        if choice==2: 
+            partner = 'HOST: '
+        print(partner + rsa.decrypt(client.recv(1024), private_key).decode())  #receives,decrypts using private key and decodes the message
 
 threading.Thread(target= sending_messages, args=(client,)).start()    #starts the sending message thread
 threading.Thread(target= receiving_messages, args= (client,)).start()    #starts the receiving message thread

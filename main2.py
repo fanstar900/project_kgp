@@ -51,11 +51,18 @@ def send_msg(client):
 
 def recv_msg(client):
     while True:
+
+        if option==1: 
+            partner = 'CLIENT: '
+        if option==2: 
+            partner = 'HOST: '
+
+
         recv_msg = pickle.loads(client.recv(1024))    # receives the message in the form of bytes and converts it in the list form
                                                     # NOTE: here client.recv(1024) receives the message in the form of bytes 
         recv_msg = _RSA.decoder(recv_msg)       # decrypts the message from list form to strings of characters
 
-        print('Partner: {}'.format(  recv_msg  )  )    # displays what client has written
+        print('{}{}'.format(  partner , recv_msg  )  )    # displays what client has written
 
 threading.Thread(target= send_msg, args=(client,)).start()   #starts the sending message thread
 threading.Thread(target= recv_msg, args=(client,)).start()    #starts the receiving message thread
